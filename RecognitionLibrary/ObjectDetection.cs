@@ -19,15 +19,22 @@ namespace RecognitionLibrary
         static readonly string[] classesNames = new string[] { "person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat", "traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup", "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donut", "cake", "chair", "sofa", "pottedplant", "bed", "diningtable", "toilet", "tvmonitor", "laptop", "mouse", "remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors", "teddy bear", "hair drier", "toothbrush" };
 
         
-        public static void Detect(string directory)
+        public static void Detect(string directory,
+            CancellationTokenSource cts,
+            ConcurrentQueue<Tuple<string, YoloV4Result>> detectionResults)
         {
             var filenames = Directory.GetFiles(directory).Select(path => Path.GetFullPath(path)).ToArray();
 
             var modelResults = new ConcurrentStack<YoloV4Result>();
             MLContext mlContext = new MLContext();
 
-            var pipeline = mlContext.Transforms.ResizeImages(inputColumnName: "bitmap", outputColumnName: "input_1:0", imageWidth: 416, imageHeight: 416, resizing: ResizingKind.IsoPad)
-                .Append(mlContext.Transforms.ExtractPixels(outputColumnName: "input_1:0", scaleImage: 1f / 255f, interleavePixelColors: true))
+            var pipeline = mlContext.Transforms.ResizeImages(
+                inputColumnName: "bitmap",
+                outputColumnName: "input_1:0",
+                imageWidth: 416, imageHeight: 416,
+                resizing: ResizingKind.IsoPad
+                ).Append(mlContext.Transforms.ExtractPixels(outputColumnName: "input_1:0",
+                scaleImage: 1f / 255f, interleavePixelColors: true))
                 .Append(mlContext.Transforms.ApplyOnnxModel(
                     shapeDictionary: new Dictionary<string, int[]>()
                     {
@@ -57,16 +64,6 @@ namespace RecognitionLibrary
             var sw = new Stopwatch();
             sw.Start();
 
-            var cts = new CancellationTokenSource();
-
-            var stop_task = Task.Factory.StartNew(_ =>
-            {
-                var stop_str = Console.ReadLine();
-                if (stop_str.Length > 0)
-                {
-                    cts.Cancel();
-                }
-            }, cts, cts.Token);
 
 
             var tasks = new Task[filenames.Length];
@@ -76,38 +73,34 @@ namespace RecognitionLibrary
                 {
                     if (cts.IsCancellationRequested)
                     {
-                        Console.WriteLine("Stop requested");
                         return;
                     }
 
                     int file_index = (int)pi;
                     var path = filenames[file_index];
                     var bitmap = new Bitmap(Image.FromFile(path));
-                    var predictionEngine = mlContext.Model.CreatePredictionEngine<YoloV4BitmapData, YoloV4Prediction>(model);
+                    var predictionEngine = mlContext.Model
+                    .CreatePredictionEngine<YoloV4BitmapData, YoloV4Prediction>(model);
                     var predict = predictionEngine.Predict(new YoloV4BitmapData() { Image = bitmap });
                     var results = predict.GetResults(classesNames, 0.3f, 0.7f);
+
                     foreach (var detected in results)
                     {
-                        var x1 = detected.BBox[0];
-                        var y1 = detected.BBox[1];
-                        var x2 = detected.BBox[2];
-                        var y2 = detected.BBox[3];
-
-                        Console.WriteLine($"  Image: {path}, object:  {detected.Label}, rectangular between ({x1:0.0}, {y1:0.0}) and ({x2:0.0}, {y2:0.0}), probability: {detected.Confidence.ToString("0.00")}");
                         if (cts.IsCancellationRequested)
                         {
-                            Console.WriteLine("Stop2 requested");
                             return;
                         }
+
+                        var resTuple = new Tuple<string, YoloV4Result>(directory, detected);
+                        detectionResults.Enqueue(resTuple);
                     }
-                }, i, cts.Token);
+                }, i);
             }
 
 
             Task.WaitAll(tasks);
             cts.Cancel();
             sw.Stop();
-            Console.WriteLine($"Done. Taken {sw.ElapsedMilliseconds} ms");
         }
     }
 }
