@@ -1,0 +1,38 @@
+﻿<Window x:Class="RecognitionAppWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RecognitionAppWPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="8*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Menu Name="Menu" Margin="10,10,50,10">
+                <MenuItem Header="Open" Name="Open" Click="Open_Click"/>
+                <MenuItem Header="Stop" Name="Stop" Click="Stop_Click"/>
+                <MenuItem Header="Start" Name="Start" Click="Start_Click"/>
+            </Menu>
+        </Grid>
+        <Grid Grid.Row="1">
+            <TextBox Margin="10,10,350,330" Name="DirectoryPath"/>
+            <TextBox Margin="480,10,10,330" Name="Status"/>
+            <ListBox Margin="10,60,10,10" Name="listBox_Images">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding}" Width="800"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Grid>
+</Window>
