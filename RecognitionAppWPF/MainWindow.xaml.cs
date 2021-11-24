@@ -181,7 +181,7 @@ namespace RecognitionAppWPF
             }
             catch (Exception ex)
             {
-                Status.Text = ex.Message + ex.StackTrace; 
+                Status.Text = ex.Message; 
             }
         }
     }
