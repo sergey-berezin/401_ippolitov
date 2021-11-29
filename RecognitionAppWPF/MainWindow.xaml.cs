@@ -115,6 +115,8 @@ namespace RecognitionAppWPF
 
         private async void Start_Click(object sender, RoutedEventArgs e)
         {
+            Open.IsEnabled = false;
+            Start.IsEnabled = false;
             var detectionResults = new ConcurrentQueue<Tuple<string, YoloV4Result>>();
             cts = new CancellationTokenSource();
             token = cts.Token;
@@ -146,10 +148,6 @@ namespace RecognitionAppWPF
                         var g = Graphics.FromImage(bitmap);
 
                         var detectedObject = result.Item2;
-                        if (detectedObject.Confidence < 0.5)
-                        {
-                            continue;
-                        }
                         var x1 = detectedObject.BBox[0];
                         var y1 = detectedObject.BBox[1];
                         var x2 = detectedObject.BBox[2];
@@ -182,6 +180,11 @@ namespace RecognitionAppWPF
             catch (Exception ex)
             {
                 Status.Text = ex.Message; 
+            }
+            finally
+            {
+                Open.IsEnabled = true;
+                Start.IsEnabled = true;
             }
         }
     }
