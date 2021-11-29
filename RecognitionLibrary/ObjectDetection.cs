@@ -91,7 +91,7 @@ namespace RecognitionLibrary
                             return;
                         }
 
-                        var resTuple = new Tuple<string, YoloV4Result>(directory, detected);
+                        var resTuple = new Tuple<string, YoloV4Result>(path, detected);
                         detectionResults.Enqueue(resTuple);
                     }
                 }, i);
