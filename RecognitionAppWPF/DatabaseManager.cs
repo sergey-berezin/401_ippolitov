@@ -81,11 +81,7 @@ namespace RecognitionAppWPF
 
         public bool Equals(Image other)
         {
-            if (ImageHash != other.ImageHash)
-            {
-                return false;
-            }
-            return Content.SequenceEqual(other.Content);
+            return ImageHash == other.ImageHash && Content.SequenceEqual(other.Content);
         }
     }
 
