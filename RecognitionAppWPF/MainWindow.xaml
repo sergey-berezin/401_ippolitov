@@ -12,16 +12,17 @@
             <RowDefinition Height="8*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <Menu Name="Menu" Margin="10,10,50,10">
+            <Menu Name="Menu" Margin="10,10,10,10">
                 <MenuItem Header="Open" Name="Open" Click="Open_Click"/>
                 <MenuItem Header="Stop" Name="Stop" Click="Stop_Click"/>
                 <MenuItem Header="Start" Name="Start" Click="Start_Click"/>
+                <MenuItem Header="Clear" Name="Clear" Click="Clear_Click"/>
             </Menu>
         </Grid>
         <Grid Grid.Row="1">
             <TextBox Margin="10,10,350,330" Name="DirectoryPath"/>
             <TextBox Margin="480,10,10,330" Name="Status"/>
-            <ListBox Margin="10,60,10,10" Name="listBox_Images">
+            <ListBox Margin="10,60,350,10" Name="listBox_Images">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"/>
@@ -29,10 +30,12 @@
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Image Source="{Binding}" Width="800"/>
+                        <Image Source="{Binding}" Width="200"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            <TextBlock Margin="480,60,10,280" Text="Detected objects:"/>
+            <ListBox Margin="480,90,10,10" Name="listBox_Objects" />
         </Grid>
     </Grid>
 </Window>
