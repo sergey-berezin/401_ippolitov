@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecognitionLibrary", "..\RecognitionLibrary\RecognitionLibrary.csproj", "{DFAA927A-B1EA-4732-B5E4-CA233DE70C2B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecognitionAppWPF", "..\RecognitionAppWPF\RecognitionAppWPF.csproj", "{243D807D-ABD6-47B1-8196-E4A30E1F3AA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecognitionAppWPF", "RecognitionAppWPF.csproj", "{243D807D-ABD6-47B1-8196-E4A30E1F3AA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
